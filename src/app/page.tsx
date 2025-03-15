@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Chessboard } from 'react-chessboard';
 import { Square } from 'chess.js';
 import { CustomChess } from './custom-chess';
-import { kingToQueenScenario, knightCheckScenario } from './chess-scenario';
+import { knightCheckScenario } from './chess-scenario';
 
 // https://github.com/hexgrad/kokoro/tree/main/kokoro.js
 
@@ -17,7 +17,7 @@ function App() {
 
   useEffect(() => {
     setGame(scenario.setupBoard());
-  }, []);
+  }, [scenario]);
 
   // Get valid moves for a piece without modifying the game state
   function getValidMovesForPiece(square: Square): Square[] {

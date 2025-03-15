@@ -26,7 +26,7 @@ export class CustomChess {
             
             rows.forEach((row, rank) => {
                 let file = 0;
-                for (let char of row) {
+                for (const char of row) {
                     if (/\d/.test(char)) {
                         // Skip empty squares
                         file += parseInt(char);
@@ -228,7 +228,6 @@ export class CustomChess {
         if (!piece) return [];
 
         const moves: Square[] = [];
-        const [rank, file] = this.squareToCoords(square);
 
         // Check all possible squares based on piece type
         for (let r = 0; r < 8; r++) {
