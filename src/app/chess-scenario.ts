@@ -47,6 +47,6 @@ export const knightCheckScenario: ChessScenario = {
   },
   
   checkObjective: (game: CustomChess) => {
-    return game.get('f2')?.type === 'n';
+    return game.get('f2')?.type === 'n' || game.get('g3')?.type === 'n';
   }
 }; 
