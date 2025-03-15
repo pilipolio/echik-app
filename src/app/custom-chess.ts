@@ -186,34 +186,36 @@ export class CustomChess {
         return false;
     }
 
-    move(options: MoveOptions): boolean {
-        const piece = this.get(options.from);
+    private validateMove(from: Square, to: Square): boolean {
+        const piece = this.get(from);
         if (!piece) return false;
 
-        // Validate move based on piece type
-        let isLegalMove = false;
+        // Validate move based on piece type without modifying board state
         switch (piece.type) {
             case 'k':
-                isLegalMove = this.isLegalKingMove(options.from, options.to);
-                break;
+                return this.isLegalKingMove(from, to);
             case 'q':
-                isLegalMove = this.isLegalQueenMove(options.from, options.to);
-                break;
+                return this.isLegalQueenMove(from, to);
             case 'r':
-                isLegalMove = this.isLegalRookMove(options.from, options.to);
-                break;
+                return this.isLegalRookMove(from, to);
             case 'b':
-                isLegalMove = this.isLegalBishopMove(options.from, options.to);
-                break;
+                return this.isLegalBishopMove(from, to);
             case 'n':
-                isLegalMove = this.isLegalKnightMove(options.from, options.to);
-                break;
+                return this.isLegalKnightMove(from, to);
             case 'p':
-                isLegalMove = this.isLegalPawnMove(options.from, options.to, piece);
-                break;
+                return this.isLegalPawnMove(from, to, piece);
+            default:
+                return false;
+        }
+    }
+
+    move(options: MoveOptions): boolean {
+        if (!this.validateMove(options.from, options.to)) {
+            return false;
         }
 
-        if (!isLegalMove) return false;
+        const piece = this.get(options.from);
+        if (!piece) return false; // This should never happen if validateMove passed
 
         // Remove piece from source
         const [fromRank, fromFile] = this.squareToCoords(options.from);
@@ -233,11 +235,8 @@ export class CustomChess {
         for (let r = 0; r < 8; r++) {
             for (let f = 0; f < 8; f++) {
                 const targetSquare = this.coordsToSquare(r, f);
-                if (this.move({ from: square, to: targetSquare })) {
-                    // If move is legal, add it to moves list and restore the piece
+                if (this.validateMove(square, targetSquare)) {
                     moves.push(targetSquare);
-                    // Undo the move
-                    this.put(piece, square);
                 }
             }
         }

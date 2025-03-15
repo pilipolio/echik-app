@@ -1,5 +1,4 @@
-import { Piece, Square } from 'chess.js';
-import { CustomChess } from './custom-chess';
+import { CustomChess, Square, Piece } from './custom-chess';
 
 export interface ChessScenario {
   title: string;

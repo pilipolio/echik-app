@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Chessboard } from 'react-chessboard';
-import { Square } from 'chess.js';
-import { CustomChess } from './custom-chess';
+import { CustomChess, Square } from './custom-chess';
 import { knightCheckScenario } from './chess-scenario';
 
 // https://github.com/hexgrad/kokoro/tree/main/kokoro.js
@@ -24,92 +23,8 @@ function App() {
     const piece = game.get(square);
     if (!piece) return [];
     
-    const validSquares: Square[] = [];
-    
-    // For knight, check all possible L-shaped moves
-    if (piece.type === 'n') {
-      // Parse the square (e.g., "a1" -> file: "a", rank: "1")
-      const file = square.charAt(0);
-      const rank = square.charAt(1);
-      
-      // Convert file letter to number (a=0, b=1, etc.)
-      const fileNum = file.charCodeAt(0) - 'a'.charCodeAt(0);
-      // Convert rank string to number
-      const rankNum = parseInt(rank);
-      
-      // All possible knight moves
-      const moves = [
-        { rankDiff: 2, fileDiff: 1 },
-        { rankDiff: 2, fileDiff: -1 },
-        { rankDiff: -2, fileDiff: 1 },
-        { rankDiff: -2, fileDiff: -1 },
-        { rankDiff: 1, fileDiff: 2 },
-        { rankDiff: 1, fileDiff: -2 },
-        { rankDiff: -1, fileDiff: 2 },
-        { rankDiff: -1, fileDiff: -2 }
-      ];
-      
-      for (const move of moves) {
-        const newFileNum = fileNum + move.fileDiff;
-        const newRankNum = rankNum + move.rankDiff;
-        
-        // Check if the new position is on the board
-        if (newFileNum >= 0 && newFileNum < 8 && newRankNum >= 1 && newRankNum <= 8) {
-          const newFile = String.fromCharCode('a'.charCodeAt(0) + newFileNum);
-          const newRank = newRankNum.toString();
-          const newSquare = newFile + newRank as Square;
-          
-          // Create a new game instance to test the move
-          const newGame = new CustomChess(game.fen());
-          try {
-            if (newGame.move({ from: square, to: newSquare })) {
-              validSquares.push(newSquare);
-            }
-          } catch {
-            // Invalid move
-          }
-        }
-      }
-    } else if (piece.type === 'k') {
-      // Parse the square (e.g., "a1" -> file: "a", rank: "1")
-      const file = square.charAt(0);
-      const rank = square.charAt(1);
-      
-      // Convert file letter to number (a=0, b=1, etc.)
-      const fileNum = file.charCodeAt(0) - 'a'.charCodeAt(0);
-      // Convert rank string to number
-      const rankNum = parseInt(rank);
-      
-      // All possible king moves (8 directions)
-      for (let rankDiff = -1; rankDiff <= 1; rankDiff++) {
-        for (let fileDiff = -1; fileDiff <= 1; fileDiff++) {
-          // Skip the current position
-          if (rankDiff === 0 && fileDiff === 0) continue;
-          
-          const newFileNum = fileNum + fileDiff;
-          const newRankNum = rankNum + rankDiff;
-          
-          // Check if the new position is on the board
-          if (newFileNum >= 0 && newFileNum < 8 && newRankNum >= 1 && newRankNum <= 8) {
-            const newFile = String.fromCharCode('a'.charCodeAt(0) + newFileNum);
-            const newRank = newRankNum.toString();
-            const newSquare = newFile + newRank as Square;
-            
-            // Create a new game instance to test the move
-            const newGame = new CustomChess(game.fen());
-            try {
-              if (newGame.move({ from: square, to: newSquare })) {
-                validSquares.push(newSquare);
-              }
-            } catch {
-              // Invalid move
-            }
-          }
-        }
-      }
-    }
-    
-    return validSquares;
+    // Use the built-in getLegalMoves method from CustomChess
+    return game.getLegalMoves(square);
   }
 
   function onDrop(sourceSquare: Square, targetSquare: Square): boolean {
